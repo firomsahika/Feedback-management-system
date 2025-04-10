@@ -9,7 +9,7 @@ export interface User {
     role: Role;
 }
 
-// create user 
+// create user
 export const createUser = async (user: User, extraData: any) => {
     try {
         const newUser = await prisma.user.create({
@@ -19,7 +19,7 @@ export const createUser = async (user: User, extraData: any) => {
                 password: user.password,
                 role: user.role
             }
-        })
+        });
 
         switch (user.role) {
             case Role.STUDENT:
@@ -51,17 +51,16 @@ export const createUser = async (user: User, extraData: any) => {
                         userId: newUser.id,
                         name: extraData.name,
                         specialization: extraData.specialization,
-                        department: extraData.department,
                     }
                 });
                 break;
-                
+
             case Role.DEPARTMENT:
                 await prisma.department.create({
                     data: {
                         userId: newUser.id,
                         name: extraData.name,
-                        faculty: extraData.faculty,
+                        // faculty: extraData.faculty,
                     }
                 });
                 break;
@@ -69,14 +68,17 @@ export const createUser = async (user: User, extraData: any) => {
             default:
                 throw new Error("Invalid role specified.");
         }
+
+        // **Crucially, return the newUser object here**
+        return newUser;
+
     } catch (error) {
         console.error("❌ Prisma error while creating user:", error);
         throw new Error("Failed to create user");
     }
-}
+};
 
 // get all user
-
 export const getAllUser = async () => {
     try {
         return await prisma.user.findMany();
@@ -84,31 +86,28 @@ export const getAllUser = async () => {
         console.error("❌ Prisma error while getting all user:", error);
         throw new Error("Failed to getting all user");
     }
-}
+};
 
 // find user by email
-
 export const findUserByEmail = async (email: string) => {
     try {
         return await prisma.user.findUnique({
             where: { email },
-        })
+        });
     } catch (error) {
         console.error("❌ Prisma error while finduserbyemail", error);
         throw new Error("Failed to finduser");
     }
-}
+};
 
-//Get user by role
-
+// Get user by role
 export const findUserByRole = async (role: Role) => {
     try {
         return await prisma.user.findMany({
             where: { role },
-        })
+        });
     } catch (error) {
         console.error("❌ Prisma error while finding users by role:", error);
         throw new Error("Failed to find users by role");
     }
-}
-
+};
