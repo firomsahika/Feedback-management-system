@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from 'bcryptjs'
 import { createUser, findUserByEmail, getAllUser } from "../models/userModel";
-import { Role } from "@prisma/client";
+// import { Role } from "@prisma/client";
 import jwt from 'jsonwebtoken'
 
 
