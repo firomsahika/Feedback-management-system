@@ -49,8 +49,7 @@ export const createUser = async (user: User, extraData: any) => {
                 await prisma.faculty.create({
                     data: {
                         userId: newUser.id,
-                        name: extraData.name,
-                        specialization: extraData.specialization,
+                        facultyName: extraData.facultyName,
                     }
                 });
                 break;

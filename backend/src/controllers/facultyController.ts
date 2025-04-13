@@ -5,14 +5,14 @@ import { createUser } from "../models/userModel";
 
 import { Role } from "@prisma/client";
 
-export const registerFaculty = async (req: Request, res: Response): Promise<Response | void> => {
+export const registerFaculty = async (req: Request, res: Response): Promise<void> => {
     try {
         const { name, description, email, password } = req.body;
 
         const existingUser = await findUserByEmail(email);
 
         if (existingUser) {
-            return res.status(400).json({ error: "User with this email already exists!" });
+            res.status(400).json({ error: "User with this email already exists!" });
         }
 
         // 2. Create a new User record with the FACULTY role
@@ -27,13 +27,13 @@ export const registerFaculty = async (req: Request, res: Response): Promise<Resp
         );
 
         if (!newUser?.id) {
-            return res.status(500).json({ error: "Failed to create user for faculty." });
+            res.status(500).json({ error: "Failed to create user for faculty." });
         }
 
         // 3. Create the Faculty-specific record, linking it to the User
         const newFaculty = await createFaculty({
             userId: newUser.id, // Provide the userId from the newly created User
-            name,
+            facultyName: name,
             description,
         });
 
@@ -45,12 +45,14 @@ export const registerFaculty = async (req: Request, res: Response): Promise<Resp
     }
 };
 
-export const AllFaculty = async (req: Request, res: Response): Promise<Response<any, Record<string, any>> | undefined> => {
+
+
+export const AllFaculty = async (req: Request, res: Response): Promise<void> => {
     try {
         const faculties = await getAllFaculty();
 
         if (!faculties || faculties.length === 0) {
-            return res.status(404).json({ error: "No faculties exist!" });
+            res.status(404).json({ error: "No faculties exist!" });
         }
         res.status(200).json(faculties); // Send the list of faculties
     } catch (err) {

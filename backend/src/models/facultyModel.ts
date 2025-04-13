@@ -3,7 +3,7 @@ import prisma from "../config/prisma";
 export interface Faculty {
     id?: string;
     userId: number;
-    name: string;
+    facultyName: string;
     description?: string;
 }
 
@@ -20,7 +20,7 @@ export const createFaculty = async (faculty: Faculty) => {
         return await prisma.faculty.create({
             data: {
                 userId: faculty.userId,
-                name: faculty.name,
+                facultyName: faculty.facultyName,
                 description: faculty.description,
             },
 
@@ -47,10 +47,10 @@ export const getAllFaculty = async () => {
 
 // find faculty by name
 
-export const findFacultyByName = async (name: string) => {
+export const findFacultyByName = async (facultyName: string) => {
     try {
         return await prisma.faculty.findFirst({
-            where: { name }
+            where: { facultyName: facultyName }
         })
     } catch (error) {
         console.error("❌ Prisma error while creating faculty:", error);

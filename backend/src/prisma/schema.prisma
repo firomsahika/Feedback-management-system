@@ -53,10 +53,10 @@ model Instructor {
 }
 
 model Faculty {
-  id             String  @id @default(uuid())
-  userId         Int     @unique
-  name           String
-  description    String?
+  id          String  @id @default(uuid())
+  userId      Int     @unique
+  facultyName String
+  description String?
 
   user User @relation("UserToFaculty", fields: [userId], references: [id], onDelete: Cascade)
 }
