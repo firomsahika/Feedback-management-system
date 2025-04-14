@@ -3,11 +3,18 @@
     import facultyRoutes from './routes/facultyRoutes'
     import feedbackRoutes from './routes/feedbackRoutes'
     import dotenv from 'dotenv'
+    import cors from 'cors'
 
 
     dotenv.config();
 
     const app = express();
+
+    app.use(cors({
+        origin: 'http://localhost:3000', // Replace with your frontend URL
+        credentials: true, // Allow credentials
+
+    }))
     app.use(express.json())
 
     const PORT = process.env.PORT || 5000
