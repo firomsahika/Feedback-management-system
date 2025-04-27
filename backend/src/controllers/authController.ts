@@ -35,7 +35,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
         );
 
         res.status(201).json({
-            success:true,
+            success: true,
             message: "User registered succesfully",
             user: newUser
         })
@@ -73,7 +73,12 @@ export const loginUser = async (req: Request, res: Response) => {
             { expiresIn: "2 days" }
         )
 
-        res.status(200).json({ message: "Logged in successfully!!", token, existingUser })
+        res.status(200).json({
+            success: true,
+            message: "Logged in successfully!!",
+            token,
+            existingUser
+        })
 
     } catch (err) {
         res.status(500).json({ error: "Internal server error!" })
