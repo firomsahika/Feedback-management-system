@@ -57,7 +57,7 @@ model StudentClass {
 
 model Course {
   id          String       @id @default(uuid())
-  courseName  String
+  courseName  String       @unique
   courseCode  String
   courseType  CourseType
   createdBy   String
