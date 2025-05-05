@@ -12,71 +12,41 @@ export interface User {
 // create user
 export const createUser = async (user: User, extraData: any) => {
     try {
-        const newUser = await prisma.user.create({
-            data: {
-                name: user.name,
-                email: user.email,
-                password: user.password,
-                role: user.role
-            }
+      // Validate role
+      if (user.role !== Role.student && user.role !== Role.admin) {
+        throw new Error("Invalid role. Must be STUDENT or ADMIN.");
+      }
+  
+      const newUser = await prisma.user.create({
+        data: {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+          role: user.role,
+        },
+      });
+  
+      // If role is STUDENT, create associated student data
+      if (user.role === Role.student) {
+        await prisma.student.create({
+          data: {
+            userId: newUser.id,
+            programme: extraData.programme,
+            semester: extraData.semester,
+            gender: extraData.gender,
+            batch: extraData.batch,
+          },
         });
-
-        switch (user.role) {
-            case Role.STUDENT:
-                await prisma.student.create({
-                    data: {
-                        userId: newUser.id,
-                        programme: extraData.programme,
-                        semester: extraData.semester,
-                        gender: extraData.gender,
-                        batch: extraData.batch,
-                    }
-                });
-                break;
-
-            case Role.INSTRUCTOR:
-                await prisma.instructor.create({
-                    data: {
-                        userId: newUser.id,
-                        name: extraData.name,
-                        course: extraData.course,
-                        department: extraData.department,
-                    }
-                });
-                break;
-
-            case Role.FACULTY:
-                await prisma.faculty.create({
-                    data: {
-                        userId: newUser.id,
-                        facultyName: extraData.facultyName,
-                    }
-                });
-                break;
-
-            case Role.DEPARTMENT:
-                await prisma.department.create({
-                    data: {
-                        userId: newUser.id,
-                        name: extraData.name,
-                        // faculty: extraData.faculty,
-                    }
-                });
-                break;
-
-            default:
-                throw new Error("Invalid role specified.");
-        }
-
-        // **Crucially, return the newUser object here**
-        return newUser;
-
+      }
+  
+      // For ADMIN, no extra data creation needed
+      return newUser;
     } catch (error) {
-        console.error("❌ Prisma error while creating user:", error);
-        throw new Error("Failed to create user");
+      console.error("❌ Prisma error while creating user:", error);
+      throw new Error("Failed to create user");
     }
-};
-
+  };
+  
 // get all user
 export const getAllUser = async () => {
     try {

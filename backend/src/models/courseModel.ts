@@ -1,11 +1,12 @@
 import { CourseType } from "@prisma/client";
-import prisma from "config/prisma";
+import prisma from "../config/prisma";
 
 export interface Course{
     id? : string
     courseName:string
     courseCode:string
-    courseType:CourseType
+    courseType:CourseType,
+    teacherName:string,
 }
 
 
@@ -17,11 +18,7 @@ export const createCourse = async(course: Course) => {
                 courseName:course.courseName,
                 courseCode:course.courseCode,
                 courseType:course.courseType,
-                creator:{
-                   connect:{    
-                    id:"creator id placeholder"
-                   },
-                },
+                teacherName:course.teacherName,
             },
         })
     } catch (error) {
@@ -32,14 +29,10 @@ export const createCourse = async(course: Course) => {
 
 export const getAllCourses = async() =>{
     try {
-        return await prisma.course.findMany({
-            include:{
-                creator:true,
-            }
-        })
+       return await prisma.course.findMany();
     } catch (error) {
-        console.error("❌ Prisma error while creating class:", error);
-        throw new Error("Failed to create class");
+        console.error("❌ Prisma error while getting course:", error);
+        throw new Error("Failed to getcourses");
     }
 }
 
@@ -63,4 +56,14 @@ export const getCourseByName = async(courseName:string) =>{
         console.error("❌ Prisma error while creating class:", error);
         throw new Error("Failed to create course");
     }
+}
+
+export const deleteCourse = async(id:string)=>{
+    try {
+        return await prisma.course.delete({
+            where:{id}
+        })
+    } catch (error) {
+        console.error("❌ Prisma error while deleting course:", error);
+        throw new Error("Failed to delete course");    }
 }
