@@ -28,10 +28,9 @@ model User {
 
   // Relations
  
-  createdParameters  FeedbackParameter[] @relation("CreatedParameters")
+
   assignedTeachers   Teacher[]           @relation("AssignedTeachers")
   studentClasses     StudentClass[]
-  feedbacks          Feedback[]
   student Student?
 }
 
@@ -43,6 +42,8 @@ model Student {
   semester  String
   gender    String
   batch     String
+
+  feedbacks Feedback[] 
 }
 
 model Class {
@@ -52,7 +53,7 @@ model Class {
   createdBy  String
 
   studentClasses StudentClass[]
-  teacherCourses TeacherCourse[]
+  // teacherCourses TeacherCourse[]
 }
 
 model StudentClass {
@@ -63,6 +64,7 @@ model StudentClass {
   student   User     @relation(fields: [studentId], references: [id])
   class     Class    @relation(fields: [classId], references: [id])
 }
+
 
 model Course {
   id          String       @id @default(uuid())
@@ -86,32 +88,25 @@ model TeacherCourse {
   teacherId  String
   courseId   String
   classId    String
-
-  
-  class      Class    @relation(fields: [classId], references: [id])
-  feedbacks  Feedback[]
 }
 
 model FeedbackParameter {
   id            String      @id @default(uuid())
   parameterName String
   parameterType CourseType
-  createdBy     String
-  creator       User        @relation("CreatedParameters", fields: [createdBy], references: [id])
-
+  courseName String
+  teacherName String
   feedbacks     Feedback[]
 }
 
 model Feedback {
   id              String            @id @default(uuid())
-  studentId       String
-  teacherCourseId String
+  studentId       Int
   parameterId     String
   rating          Int
   comment         String?
   createdAt       DateTime          @default(now())
 
-  student         User              @relation(fields: [studentId], references: [id])
-  teacherCourse   TeacherCourse     @relation(fields: [teacherCourseId], references: [id])
+  student         Student            @relation(fields: [studentId], references: [id])
   parameter       FeedbackParameter @relation(fields: [parameterId], references: [id])
 }
