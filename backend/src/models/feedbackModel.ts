@@ -1,8 +1,9 @@
-import prisma from "../config/prisma"; // Make sure to import your prisma client
-import { CourseType } from "@prisma/client";
-import { Student, FeedbackParameter } from "@prisma/client";
+import { Response, Request } from "express";
 
-// Interface for FeedbackParameter (optional)
+import prisma from "../config/prisma"; 
+import { CourseType, FeedbackParameter, Student  } from "@prisma/client"; // Alias Student to avoid confusion
+
+
 export interface FeedbackParameters {
   id?: string;
   parameterName: string;
@@ -11,7 +12,6 @@ export interface FeedbackParameters {
   teacherName: string;
 }
 
-// Interface for Feedback
 export interface Feedback {
   id: string;
   studentId: string;
@@ -19,11 +19,10 @@ export interface Feedback {
   rating: number;
   comment?: string;
   createdAt: Date;
-  student?: Student; // Assuming a Student interface exists
+  student?: Student; 
   parameter?: FeedbackParameter;
 }
 
-// Create FeedbackParameter (Admin only)
 export const createFeedbackParameter = async (
   parameter: FeedbackParameters
 ) => {

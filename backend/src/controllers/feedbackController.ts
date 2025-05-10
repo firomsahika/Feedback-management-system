@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { createFeedback, createFeedbackParameter, getAllFeedbackParameters, getFeedbackParameterById } from "../models/feedbackModel"
-// import { getAuth } from "your-auth-lib"; // Use your authentication middleware (JWT, Passport, etc.)
+
 
 export const createFeedbackParameterController = async (req: Request, res: Response):Promise<void> => {
   const { parameterName, parameterType, courseName, teacherName } = req.body;
 
   try {
-    // Ensure only Admin can create feedback parameters
+   
     const user = req.user; 
 
     if (!user || user.role !== "admin") {
@@ -63,13 +63,13 @@ export const createFeedbackController = async (req: Request, res: Response): Pro
 
 
 // Controller to get all Feedback Parameters (Admin only)
-export const getAllFeedbackParametersController = async (req: Request, res: Response) => {
+export const getAllFeedbackParametersController = async (req: Request, res: Response): Promise<Response> => {
   try {
     const feedbackParameters = await getAllFeedbackParameters();
     return res.status(200).json(feedbackParameters);
   } catch (error) {
     console.error("❌ Error while fetching all feedback parameters:", error);
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 

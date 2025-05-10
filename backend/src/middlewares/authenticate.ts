@@ -33,7 +33,7 @@ export const authenticate = (
   console.log(token)
 
   try {
-    console.log("Inside try blcok")
+    console.log("Inside try block")
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET as string
