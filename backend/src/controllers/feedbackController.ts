@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
-import { createFeedback, createFeedbackParameter, getAllFeedbackParameters, getFeedbackParameterById } from "../models/feedbackModel"
+import { createFeedback, createFeedbackParameter, getAllFeedbackParameters, getFeedbackParameterById, getAllFeedback } from "../models/feedbackModel"
 
 
 export const createFeedbackParameterController = async (req: Request, res: Response):Promise<void> => {
@@ -89,3 +89,17 @@ export const getFeedbackParameterByIdController = async (req: Request, res: Resp
     res.status(500).json({ error: error });
   }
 };
+
+
+export const getAllFeedbackController = async(req:Request, res:Request) =>{
+  try {
+    const feedbacks = await getAllFeedback();
+    if(!feedbacks){
+      return res.status(404).json({message: "Feedback not found!"})
+    }
+  } catch (error) {
+    console.error("❌ Error while fetching feedbacks:", error);
+    res.status(500).json({ error: error });
+  }
+}
+

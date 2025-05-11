@@ -8,6 +8,7 @@ const router = Router();
 router.post("/create-parameter", authenticate, authorizeRole("admin"), createFeedbackParameterController )
 router.get("/parameters", getAllFeedbackParametersController )
 router.post("/submit-feedback", authenticate, createFeedbackController)
+router.get("/all", )
 
 
 export default router;
