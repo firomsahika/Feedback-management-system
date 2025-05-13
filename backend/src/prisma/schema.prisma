@@ -32,6 +32,7 @@ model User {
   assignedTeachers   Teacher[]           @relation("AssignedTeachers")
   studentClasses     StudentClass[]
   student Student?
+  feedbacks Feedback[] 
 }
 
 model Student {
@@ -43,7 +44,7 @@ model Student {
   gender    String
   batch     String
 
-  feedbacks Feedback[] 
+  
 }
 
 model Class {
@@ -101,12 +102,12 @@ model FeedbackParameter {
 
 model Feedback {
   id              String            @id @default(uuid())
-  studentId       Int
+  userId          String
   parameterId     String
   rating          Int
   comment         String?
   createdAt       DateTime          @default(now())
 
-  student         Student            @relation(fields: [studentId], references: [id])
+  user        User              @relation(fields: [userId], references: [id])
   parameter       FeedbackParameter @relation(fields: [parameterId], references: [id])
 }

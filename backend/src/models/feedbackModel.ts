@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 
 import prisma from "../config/prisma"; 
-import { CourseType, FeedbackParameter, Student  } from "@prisma/client"; // Alias Student to avoid confusion
+import { CourseType, FeedbackParameter, Student, User  } from "@prisma/client"; // Alias Student to avoid confusion
 
 
 export interface FeedbackParameters {
@@ -14,12 +14,12 @@ export interface FeedbackParameters {
 
 export interface Feedback {
   id: string;
-  studentId: string;
+  userId: string;
   parameterId: string;
   rating: number;
   comment?: string;
   createdAt: Date;
-  student?: Student; 
+  user?: User; 
   parameter?: FeedbackParameter;
 }
 
@@ -41,27 +41,27 @@ export const createFeedbackParameter = async (
   }
 };
 
-// Create Feedback (Student giving feedback)
-export const createFeedback = async (
-  studentId: number,
-  parameterId: string,
-  rating: number,
-  comment?: string
-) => {
-  try {
-    return await prisma.feedback.create({
-      data: {
-        studentId,
-        parameterId,
-        rating,
-        comment,
-      },
-    });
-  } catch (error) {
-    console.error("❌ Prisma error while creating feedback:", error);
-    throw new Error("Failed to create feedback");
-  }
-};
+  // Create Feedback (Student giving feedback)
+  export const createFeedback = async (
+    userId: string,
+    parameterId: string,
+    rating: number,
+    comment?: string
+  ) => {
+    try {
+      return await prisma.feedback.create({
+        data: {
+          userId,
+          parameterId,
+          rating,
+          comment,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Prisma error while creating feedback:", error);
+      throw new Error("Failed to create feedback");
+    }
+  };
 
 // Get All Feedback Parameters (Admin only)
 export const getAllFeedbackParameters = async () => {

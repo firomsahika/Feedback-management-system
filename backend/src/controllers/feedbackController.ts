@@ -31,8 +31,15 @@ export const createFeedbackParameterController = async (req: Request, res: Respo
 
 // Controller for creating Feedback (Student feedback)
 export const createFeedbackController = async (req: Request, res: Response): Promise<void> => {
-  const { rating, comment } = req.body;
-  const { parameterId } = req.params;
+  const {feedback} = req.body;
+  // const { parameterId } = req.params;
+
+  if(!Array.isArray(feedback)){
+    res.status(400).json({message: "Feedback must be an array!"})
+    return ;
+  }
+
+  
 
   try {
     const user = req.user;
@@ -42,24 +49,21 @@ export const createFeedbackController = async (req: Request, res: Response): Pro
       return;
     }
 
-    const student = await prisma.student.findUnique({
-      where: { userId: user.id },
-    });
+    const createdFeedbacks = await Promise.all(
+      feedback.map((item) =>
+        createFeedback(user.id, item.parameterId, item.rating, item.comment)
+      )
+    )
 
-    if (!student) {
-      res.status(404).json({ message: "Student not found" });
-      return;
-    }
+    res.status(201).json({message: "Feedback created successfully", data: createdFeedbacks})
 
-    const feedback = await createFeedback(student.id, parameterId, rating, comment);
-    res.status(201).json(feedback);
-    return;
   } catch (error) {
     console.error("❌ Error while creating feedback:", error);
     res.status(500).json({ error });
     return;
   }
 };
+
 
 
 // Controller to get all Feedback Parameters (Admin only)
@@ -91,7 +95,7 @@ export const getFeedbackParameterByIdController = async (req: Request, res: Resp
 };
 
 
-export const getAllFeedbackController = async(req:Request, res:Request) =>{
+export const getAllFeedbackController = async(req:Request, res:Response) =>{
   try {
     const feedbacks = await getAllFeedback();
     if(!feedbacks){
