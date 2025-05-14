@@ -1,8 +1,7 @@
-import { Response, Request } from "express";
+import { Response, Request } from 'express';
 
-import prisma from "../config/prisma"; 
-import { CourseType, FeedbackParameter, Student, User  } from "@prisma/client"; // Alias Student to avoid confusion
-
+import prisma from '../config/prisma';
+import { CourseType, FeedbackParameter, Student, User } from '@prisma/client'; // Alias Student to avoid confusion
 
 export interface FeedbackParameters {
   id?: string;
@@ -19,7 +18,7 @@ export interface Feedback {
   rating: number;
   comment?: string;
   createdAt: Date;
-  user?: User; 
+  user?: User;
   parameter?: FeedbackParameter;
 }
 
@@ -36,40 +35,40 @@ export const createFeedbackParameter = async (
       },
     });
   } catch (error) {
-    console.error("❌ Prisma error while creating feedback parameter:", error);
-    throw new Error("Failed to create feedback parameter");
+    console.error('❌ Prisma error while creating feedback parameter:', error);
+    throw new Error('Failed to create feedback parameter');
   }
 };
 
-  // Create Feedback (Student giving feedback)
-  export const createFeedback = async (
-    userId: string,
-    parameterId: string,
-    rating: number,
-    comment?: string
-  ) => {
-    try {
-      return await prisma.feedback.create({
-        data: {
-          userId,
-          parameterId,
-          rating,
-          comment,
-        },
-      });
-    } catch (error) {
-      console.error("❌ Prisma error while creating feedback:", error);
-      throw new Error("Failed to create feedback");
-    }
-  };
+// Create Feedback (Student giving feedback)
+export const createFeedback = async (
+  userId: string,
+  parameterId: string,
+  rating: number,
+  comment?: string
+) => {
+  try {
+    return await prisma.feedback.create({
+      data: {
+        userId,
+        parameterId,
+        rating,
+        comment,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Prisma error while creating feedback:', error);
+    throw new Error('Failed to create feedback');
+  }
+};
 
 // Get All Feedback Parameters (Admin only)
 export const getAllFeedbackParameters = async () => {
   try {
     return await prisma.feedbackParameter.findMany();
   } catch (error) {
-    console.error("❌ Error while fetching feedback parameters:", error);
-    throw new Error("Failed to fetch feedback parameters");
+    console.error('❌ Error while fetching feedback parameters:', error);
+    throw new Error('Failed to fetch feedback parameters');
   }
 };
 
@@ -80,17 +79,22 @@ export const getFeedbackParameterById = async (id: string) => {
       where: { id },
     });
   } catch (error) {
-    console.error("❌ Error while fetching feedback parameter by ID:", error);
-    throw new Error("Failed to fetch feedback parameter");
+    console.error('❌ Error while fetching feedback parameter by ID:', error);
+    throw new Error('Failed to fetch feedback parameter');
   }
 };
 
 // Get Feedback
 export const getAllFeedback = async () => {
   try {
-    return await prisma.feedback.findMany();
+    return await prisma.feedback.findMany({
+      include: {
+        user: true,
+        parameter: true,
+      },
+    });
   } catch (error) {
-    console.error("❌ Error while fetching feedback parameters:", error);
-    throw new Error("Failed to fetch feedback parameters");
+    console.error('❌ Error while fetching feedback parameters:', error);
+    throw new Error('Failed to fetch feedback parameters');
   }
 };

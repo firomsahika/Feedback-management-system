@@ -95,15 +95,18 @@ export const getFeedbackParameterByIdController = async (req: Request, res: Resp
 };
 
 
-export const getAllFeedbackController = async(req:Request, res:Response) =>{
+export const getAllFeedbackController = async (req: Request, res: Response) => {
   try {
     const feedbacks = await getAllFeedback();
-    if(!feedbacks){
-      return res.status(404).json({message: "Feedback not found!"})
+
+    if (!feedbacks || feedbacks.length === 0) {
+      return res.status(404).json({ message: "Feedback not found!" });
     }
+
+    res.status(200).json(feedbacks);
   } catch (error) {
     console.error("❌ Error while fetching feedbacks:", error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 
