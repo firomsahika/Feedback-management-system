@@ -103,6 +103,7 @@ model FeedbackParameter {
 model Feedback {
   id              String            @id @default(uuid())
   userId          String
+  isActive        Boolean @default(true)
   parameterId     String
   rating          Int
   comment         String?
