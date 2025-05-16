@@ -65,7 +65,12 @@ export const createFeedback = async (
 // Get All Feedback Parameters (Admin only)
 export const getAllFeedbackParameters = async () => {
   try {
-    return await prisma.feedbackParameter.findMany();
+    return await prisma.feedbackParameter.findMany({
+      where:{
+        isActive:true,
+        isSubmitted:false,
+      }
+    });
   } catch (error) {
     console.error('❌ Error while fetching feedback parameters:', error);
     throw new Error('Failed to fetch feedback parameters');

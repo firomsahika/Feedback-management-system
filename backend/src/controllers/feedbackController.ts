@@ -31,15 +31,12 @@ export const createFeedbackParameterController = async (req: Request, res: Respo
 
 // Controller for creating Feedback (Student feedback)
 export const createFeedbackController = async (req: Request, res: Response): Promise<void> => {
-  const {feedback} = req.body;
-  // const { parameterId } = req.params;
+  const { feedback } = req.body;
 
-  if(!Array.isArray(feedback)){
-    res.status(400).json({message: "Feedback must be an array!"})
-    return ;
+  if (!Array.isArray(feedback)) {
+    res.status(400).json({ message: "Feedback must be an array!" });
+    return;
   }
-
-  
 
   try {
     const user = req.user;
@@ -49,13 +46,33 @@ export const createFeedbackController = async (req: Request, res: Response): Pro
       return;
     }
 
-    const createdFeedbacks = await Promise.all(
-      feedback.map((item) =>
-        createFeedback(user.id, item.parameterId, item.rating, item.comment)
-      )
-    )
+    const existing = await prisma.feedback.findFirst({
+      where: {
+        userId: user.id,
+      },
+    });
 
-    res.status(201).json({message: "Feedback created successfully", data: createdFeedbacks})
+    if (existing) {
+      res.status(400).json({ message: "Oops, You have already submitted this feedback!!" });
+      return;
+    }
+
+    // Create feedback entries
+    const createdFeedbacks = await Promise.all(
+      feedback.map(async (item) => {
+        const created = await createFeedback(user.id, item.parameterId, item.rating, item.comment);
+
+        // 👉 Mark the feedback parameter as submitted
+        await prisma.feedbackParameter.update({
+          where: { id: item.parameterId },
+          data: { isSubmitted: true },
+        });
+
+        return created;
+      })
+    );
+
+    res.status(201).json({ message: "Feedback created successfully", data: createdFeedbacks });
 
   } catch (error) {
     console.error("❌ Error while creating feedback:", error);
@@ -63,8 +80,6 @@ export const createFeedbackController = async (req: Request, res: Response): Pro
     return;
   }
 };
-
-
 
 // Controller to get all Feedback Parameters (Admin only)
 export const getAllFeedbackParametersController = async (req: Request, res: Response): Promise<Response> => {

@@ -97,13 +97,16 @@ model FeedbackParameter {
   parameterType CourseType
   courseName String
   teacherName String
+  isActive        Boolean @default(true)
+  isSubmitted     Boolean @default(false) 
+
+
   feedbacks     Feedback[]
 }
 
 model Feedback {
   id              String            @id @default(uuid())
   userId          String
-  isActive        Boolean @default(true)
   parameterId     String
   rating          Int
   comment         String?
