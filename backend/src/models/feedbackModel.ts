@@ -96,6 +96,7 @@ export const getAllFeedback = async () => {
       include: {
         user: true,
         parameter: true,
+        
       },
     });
   } catch (error) {
@@ -103,3 +104,5 @@ export const getAllFeedback = async () => {
     throw new Error('Failed to fetch feedback parameters');
   }
 };
+
+
